@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  rethinkdb:
+    image: rethinkdb:2.4
+    container_name: system_notification_rethinkdb
+    ports:
+      - "28015:28015"  # Client driver port
+      - "8080:8080"    # Admin web UI
+    volumes:
+      - rethinkdb_data:/data
+    networks:
+      - system_notification_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: system_notification_backend
+    ports:
+      - "${BACKEND_PORT:-9999}:9999"
+    environment:
+      - BACKEND_HOST=0.0.0.0
+      - BACKEND_PORT=9999
+      - RETHINKDB_HOST=rethinkdb
+      - RETHINKDB_PORT=28015
+      - RETHINKDB_DB=${RETHINKDB_DB:-process}
+      - RETHINKDB_TABLE=${RETHINKDB_TABLE:-modified}
+    depends_on:
+      - rethinkdb
+    networks:
+      - system_notification_network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: system_notification_frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:9999
+    depends_on:
+      - backend
+    networks:
+      - system_notification_network
+    restart: unless-stopped
+
+volumes:
+  rethinkdb_data:
+
+networks:
+  system_notification_network:
+    driver: bridge
