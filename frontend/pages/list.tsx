@@ -19,7 +19,7 @@ export default function ListItems() {
     <Layout>
       <div className="max-w-5xl mx-auto px-6 py-16">
         <div className="mb-16">
-          <h1 className="text-5xl font-light mb-2">Protocolos</h1>
+          <h1 className="text-5xl font-light mb-2">Protocols</h1>
           <div className="w-12 h-px bg-black"></div>
         </div>
 
@@ -35,7 +35,7 @@ export default function ListItems() {
 
         {data.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-400">Nenhum protocolo disponível</p>
+            <p className="text-gray-400">No protocols available</p>
           </div>
         )}
       </div>

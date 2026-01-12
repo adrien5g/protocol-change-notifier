@@ -41,9 +41,9 @@ export default function Item() {
       <div className="max-w-3xl mx-auto px-6 py-16">
         <button
           onClick={() => navigate("/")}
-          className="mb-16 text-sm hover:text-gray-600 transition-colors"
+          className="mb-16 text-sm hover:text-gray-600 transition-colors cursor-pointer"
         >
-          ← Voltar
+          ← Back
         </button>
 
         <div className="mb-16">
@@ -54,13 +54,13 @@ export default function Item() {
         <div className="border border-gray-200 p-8 mb-8">
           <div className="mb-8">
             <h2 className="text-sm uppercase tracking-wider text-gray-400 mb-2">Status</h2>
-            <p className="text-lg">{wasUpdated ? "Atualizado" : "Monitorando"}</p>
+            <p className="text-lg">{wasUpdated ? "Updated" : "Monitoring"}</p>
           </div>
           
           <p className="text-sm text-gray-600 mb-8">
             {wasUpdated 
-              ? "Este protocolo foi atualizado. Recarregue a página para ver as alterações."
-              : "Você receberá uma notificação quando este protocolo for atualizado."
+              ? "This protocol has been updated. Reload the page to see changes."
+              : "You will receive a notification when this protocol is updated."
             }
           </p>
 
@@ -69,7 +69,7 @@ export default function Item() {
             disabled={isUpdating || wasUpdated}
             className="w-full bg-black text-white py-4 hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            {isUpdating ? "Atualizando..." : wasUpdated ? "Protocolo Atualizado" : "Atualizar Protocolo"}
+            {isUpdating ? "Updating..." : wasUpdated ? "Protocol Updated" : "Update Protocol"}
           </button>
         </div>
       </div>

@@ -17,7 +17,7 @@ export default function UsersCount() {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-black text-white py-3 px-6 border-t border-gray-800">
       <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-        <span>Sistema de Notificação</span>
+        <span>Notification System</span>
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
           <span>{usersOnline} online</span>
