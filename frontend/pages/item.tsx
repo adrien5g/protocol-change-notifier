@@ -23,9 +23,7 @@ export default function Item() {
     })
 
     const unsubscribeUserCount = onProtocolUserCount((data) => {
-      console.log('Received protocol_user_count:', data, 'Current id:', id)
       if (data.protocol_id === Number(id)) {
-        console.log('Setting user count to:', data.user_count)
         setUserCount(data.user_count)
       }
     })
