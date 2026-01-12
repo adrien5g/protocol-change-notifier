@@ -9,13 +9,6 @@ export const socket: Socket = io(URL, {
   timeout: 10000,
 });
 
-// Disconnect socket when page is closed/refreshed
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
-    socket.disconnect();
-  });
-}
-
 const onConnectionCallbacks: Array<() => void> = [];
 const onDisconnectionCallbacks: Array<() => void> = [];
 const onTotalConnectionsCallbacks: Array<(total: number) => void> = [];
