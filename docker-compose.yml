@@ -1,6 +1,6 @@
 services:
   rethinkdb:
-    image: rethinkdb:2.4
+    image: rethinkdb
     container_name: system_notification_rethinkdb
     ports:
       - "28015:28015"
@@ -36,7 +36,7 @@ services:
       dockerfile: frontend/Dockerfile
     container_name: system_notification_frontend
     ports:
-      - "3000:80"
+      - "3005:80"
     environment:
       - VITE_API_URL=http://localhost:9999
     depends_on:
