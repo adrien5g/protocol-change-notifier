@@ -67,7 +67,7 @@ export default function Item() {
           <button
             onClick={updateProcess}
             disabled={isUpdating || wasUpdated}
-            className="w-full bg-black text-white py-4 hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-full bg-black text-white py-4 hover:bg-gray-800 transition-colors cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {isUpdating ? "Updating..." : wasUpdated ? "Protocol Updated" : "Update Protocol"}
           </button>
