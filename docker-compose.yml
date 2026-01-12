@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   rethinkdb:
     image: rethinkdb:2.4
     container_name: system_notification_rethinkdb
     ports:
-      - "28015:28015"  # Client driver port
-      - "8080:8080"    # Admin web UI
+      - "28015:28015"
+      - "8080:8080"
     volumes:
       - rethinkdb_data:/data
     networks:
