@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { type ReactNode } from "react"
 import UsersCount from "./usersCount"
 
 interface LayoutProps {
