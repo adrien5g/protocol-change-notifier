@@ -20,6 +20,13 @@ async def setup():
     if TABLE not in tables:
         await r.db(DB).table_create(TABLE).run(conn)
 
+async def get_users_on_protocol(process_id: int) -> dict | None:
+    cursor = await r.db(DB).table(TABLE).filter(r.row['id'] == process_id).run(conn)
+    results = await cursor.to_list()
+    if results:
+        return results[0]
+    return None
+
 async def update_modified(process_id: int):
     await r.db(DB).table(TABLE).insert({
         "id": process_id,
