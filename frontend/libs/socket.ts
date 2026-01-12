@@ -74,6 +74,14 @@ export function onProtocolUpdated(cb: (data: { protocol_id: number }) => void) {
   };
 }
 
+export function onProtocolUserCount(cb: (data: { protocol_id: number; user_count: number }) => void) {
+  socket.on('protocol_user_count', cb);
+  
+  return () => {
+    socket.off('protocol_user_count', cb);
+  };
+}
+
 export function disconnectSocket() {
   socket.disconnect();
 }

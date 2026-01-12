@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import client from "../libs/http"
-import { joinProtocol, leaveProtocol, onProtocolUpdated } from "../libs/socket"
+import { joinProtocol, leaveProtocol, onProtocolUpdated, onProtocolUserCount } from "../libs/socket"
 import Layout from "../components/Layout"
 
 export default function Item() {
@@ -9,21 +9,31 @@ export default function Item() {
   const navigate = useNavigate()
   const [isUpdating, setIsUpdating] = useState(false)
   const [wasUpdated, setWasUpdated] = useState(false)
+  const [userCount, setUserCount] = useState(0)
 
   useEffect(() => {
     if (!id) return
 
     joinProtocol(id)
 
-    const unsubscribe = onProtocolUpdated((data) => {
+    const unsubscribeUpdated = onProtocolUpdated((data) => {
       if (data.protocol_id === Number(id)) {
         setWasUpdated(true)
       }
     })
 
+    const unsubscribeUserCount = onProtocolUserCount((data) => {
+      console.log('Received protocol_user_count:', data, 'Current id:', id)
+      if (data.protocol_id === Number(id)) {
+        console.log('Setting user count to:', data.user_count)
+        setUserCount(data.user_count)
+      }
+    })
+
     return () => {
       leaveProtocol(id)
-      unsubscribe()
+      unsubscribeUpdated()
+      unsubscribeUserCount()
     }
   }, [id])
 
@@ -47,7 +57,12 @@ export default function Item() {
         </button>
 
         <div className="mb-16">
-          <h1 className="text-6xl font-light mb-2">{id}</h1>
+          <div className="flex items-baseline justify-between mb-2">
+            <h1 className="text-6xl font-light">{id}</h1>
+            <span className="text-sm text-gray-500">
+              {userCount} {userCount === 1 ? 'user' : 'users'} watching
+            </span>
+          </div>
           <div className="w-12 h-px bg-black"></div>
         </div>
 
