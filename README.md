@@ -5,6 +5,7 @@ A real-time notification system that monitors database changes and notifies conn
 ## Features
 
 - **Real-time Protocol Monitoring**: Automatically notifies users when a specific protocol is updated
+- **Live User Count**: See how many users are watching each protocol in real-time
 - **Socket.IO Integration**: WebSocket communication for instant updates
 - **Room-based Notifications**: Only users viewing a specific protocol receive updates
 - **Connection Tracking**: Real-time display of active connections
@@ -113,8 +114,9 @@ npm run dev
 
 1. Navigate to `/item/{protocol_id}` (e.g., `/item/5`)
 2. The client automatically joins the protocol's room
-3. When the protocol is updated (via API or database), an alert appears
-4. The Socket.IO connection closes after notification
+3. The page displays the number of users currently watching the protocol
+4. The user count updates in real-time as users join or leave
+5. When the protocol is updated (via API or database), an alert appears
 
 ### Updating a Protocol
 
@@ -134,13 +136,19 @@ curl -X POST http://localhost:9999/protocol/5
 
 **Client → Server:**
 - `join_protocol` - Join a protocol room
+  - Payload: `{ protocol_id: number }`
 - `leave_protocol` - Leave a protocol room
+  - Payload: `{ protocol_id: number }`
 
 **Server → Client:**
 - `connect` - Connection established
 - `disconnect` - Connection closed
 - `total_connections` - Total active connections update
+  - Payload: `{ total_connections: number }`
 - `protocol_updated` - Protocol change notification
+  - Payload: `{ protocol_id: number }`
+- `protocol_user_count` - Real-time user count for a specific protocol
+  - Payload: `{ protocol_id: number, user_count: number }`
 
 ## Project Structure
 
