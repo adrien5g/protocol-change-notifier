@@ -41,8 +41,15 @@ async def join_protocol(sid: str, data: dict):
     if protocol_id is not None:
         room = f"protocol_{protocol_id}"
         await sio.enter_room(sid, room)
-        logger.info(f"Client {sid} joined room {room}")
+        users_in_room = get_users_on_protocol(protocol_id)
+        logger.info(f"Client {sid} joined room {room} - Total users: {len(users_in_room)}")
 
+        user_count_data = {
+            "protocol_id": int(protocol_id),
+            "user_count": len(users_in_room)
+        }
+        logger.debug(f"Emitting protocol_user_count: {user_count_data}")
+        await sio.emit("protocol_user_count", user_count_data, room=room)
 
 @sio.on("leave_protocol")
 async def leave_protocol(sid: str, data: dict):
@@ -51,6 +58,25 @@ async def leave_protocol(sid: str, data: dict):
         room = f"protocol_{protocol_id}"
         await sio.leave_room(sid, room)
         logger.info(f"Client {sid} left room {room}")
+
+        # Emit updated user count to remaining users in the room
+        users_in_room = get_users_on_protocol(protocol_id)
+        user_count_data = {
+            "protocol_id": int(protocol_id),
+            "user_count": len(users_in_room)
+        }
+        logger.debug(f"Emitting protocol_user_count: {user_count_data}")
+        await sio.emit("protocol_user_count", user_count_data, room=room)
+
+
+def get_users_on_protocol(protocol_id: int) -> list[str]:
+    """Returns list of session IDs connected to a specific protocol"""
+    room = f"protocol_{protocol_id}"
+    namespace = "/"
+
+    if namespace in sio.manager.rooms and room in sio.manager.rooms[namespace]:
+        return list(sio.manager.rooms[namespace][room])
+    return []
 
 
 async def get_connections():
