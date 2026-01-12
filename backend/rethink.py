@@ -1,3 +1,4 @@
+import asyncio
 from rethinkdb import RethinkDB
 from rethinkdb.asyncio_net.net_asyncio import Connection
 from config import settings
@@ -19,6 +20,16 @@ async def setup():
     tables = await r.db(DB).table_list().run(conn)
     if TABLE not in tables:
         await r.db(DB).table_create(TABLE).run(conn)
+        await asyncio.sleep(2)
+
+    for _ in range(10):
+        try:
+            status = await r.db(DB).table(TABLE).status().run(conn)
+            if status.get('status', {}).get('all_replicas_ready'):
+                break
+        except Exception:
+            pass
+        await asyncio.sleep(1)
 
 async def update_modified(process_id: int):
     await r.db(DB).table(TABLE).insert({
