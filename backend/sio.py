@@ -1,20 +1,19 @@
 import socketio
 from loguru import logger
 
-sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
+sio = socketio.AsyncServer(
+    async_mode="asgi",
+    cors_allowed_origins="*",
+    ping_interval=10,
+    ping_timeout=5,
+)
+
+active_connections: set[str] = set()
 
 
 async def get_total_connections():
-    namespace = "/"
-    sessions = set()
-
-    if namespace in sio.manager.rooms:
-        rooms = sio.manager.rooms[namespace]
-        for room_name, sids in rooms.items():
-            if len(sids) == 1 and room_name in sids:
-                sessions.add(room_name)
-
-    return len(sessions)
+    logger.debug(f"Total connections: {len(active_connections)} - Sessions: {active_connections}")
+    return len(active_connections)
 
 
 async def broadcast_total_connections():
@@ -25,12 +24,14 @@ async def broadcast_total_connections():
 @sio.event
 async def connect(sid: str, _):
     logger.info(f"Client connected: {sid}")
+    active_connections.add(sid)
     await broadcast_total_connections()
 
 
 @sio.event
 async def disconnect(sid: str):
     logger.info(f"Client disconnected: {sid}")
+    active_connections.discard(sid)
     await broadcast_total_connections()
 
 
@@ -61,17 +62,16 @@ async def get_connections():
     if namespace in sio.manager.rooms:
         rooms = sio.manager.rooms[namespace]
 
-        for sid in rooms.keys():
-            if sid and sid != namespace:
-                user_rooms = list(rooms.get(sid, set()))
-                user_rooms = [room for room in user_rooms if room is not None and room != sid]
+        for sid in active_connections:
+            user_rooms = list(rooms.get(sid, set()))
+            user_rooms = [room for room in user_rooms if room is not None and room != sid]
 
-                connections_list.append({"sid": sid, "rooms": user_rooms})
+            connections_list.append({"sid": sid, "rooms": user_rooms})
 
-                for room in user_rooms:
-                    if room not in rooms_dict:
-                        rooms_dict[room] = []
-                    rooms_dict[room].append(sid)
+            for room in user_rooms:
+                if room not in rooms_dict:
+                    rooms_dict[room] = []
+                rooms_dict[room].append(sid)
 
     return {
         "total_connections": len(connections_list),
